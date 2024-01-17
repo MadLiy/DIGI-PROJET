@@ -1,0 +1,17 @@
+.nav-bar {
+    box-sizing: border-box;
+    padding: 0 50px;
+    height: 60px;
+    background-color: lightblue;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+li {
+    list-style: none ;
+}
+
+.profil-icon {
+    width: 35px;
+    height: auto;
+}
