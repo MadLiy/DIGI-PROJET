@@ -18,24 +18,24 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        loginform:
-            pattern: ^/api/form/login
-            provider: app_form_provider
-            stateless: true
-            json_login:
-                check_path: loginform_check
-                username_path: username
-                password_path: password
-                success_handler: lexik_jwt_authentication.handler.authentication_success
-                failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        apiform:
-            pattern: ^/api/form/
-            stateless: true
-            provider: app_form_provider
-            jwt: ~
-        form:
-            lazy: true
-            provider: app_form_provider
+        # loginform:
+        #     pattern: ^/api/form/login
+        #     provider: app_form_provider
+        #     stateless: true
+        #     json_login:
+        #         check_path: loginform_check
+        #         username_path: username
+        #         password_path: password
+        #         success_handler: lexik_jwt_authentication.handler.authentication_success
+        #         failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        # apiform:
+        #     pattern: ^/api/form/
+        #     stateless: true
+        #     provider: app_form_provider
+        #     jwt: ~
+        # form:
+        #     lazy: true
+        #     provider: app_form_provider
 
         login:
             pattern: ^/api/login
@@ -68,7 +68,7 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
-        - { path: ^/api/docs.json, roles: PUBLIC_ACCESS }
+        #- { path: ^/api/docs.json, roles: PUBLIC_ACCESS }
         #- { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 when@test:
     security:

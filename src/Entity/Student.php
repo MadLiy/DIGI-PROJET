@@ -166,7 +166,7 @@ class Student implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->participent;
     }
 
-    public function addParticipent(session $participent): static
+    public function addParticipent(Session $participent): static
     {
         if (!$this->participent->contains($participent)) {
             $this->participent->add($participent);
@@ -175,7 +175,7 @@ class Student implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeParticipent(session $participent): static
+    public function removeParticipent(Session $participent): static
     {
         $this->participent->removeElement($participent);
 

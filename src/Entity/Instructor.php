@@ -60,7 +60,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: course::class, inversedBy: 'instructors')]
+    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'instructors')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
@@ -202,7 +202,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dispense;
     }
 
-    public function addDispense(course $dispense): static
+    public function addDispense(Course $dispense): static
     {
         if (!$this->dispense->contains($dispense)) {
             $this->dispense->add($dispense);
@@ -211,7 +211,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeDispense(course $dispense): static
+    public function removeDispense(Course $dispense): static
     {
         $this->dispense->removeElement($dispense);
 
