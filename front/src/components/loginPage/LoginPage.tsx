@@ -1,18 +1,24 @@
 import React, { FormEvent, useState } from "react";
 import "./loginPage.css";
+import UserInterface from "../../interfaces/UserInterface";
 
-const LoginPage = () => {
-  const [user, setUser] = useState({});
+interface UserProps {
+  setUser: (user: UserInterface | undefined) => void;
+}
+
+const LoginPage: React.FC<UserProps> = ({ setUser }) => {
+  const [authUser, setAuthUser] = useState({});
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name]: value }));
+    setAuthUser((prevAuthUser) => ({ ...prevAuthUser, [name]: value }));
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log(user);
+    console.log(authUser);
     // appeler method de connexion
+    // recup retour puis setUSer()
   };
   return (
     <section className="connect">
