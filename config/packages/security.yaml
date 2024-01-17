@@ -71,7 +71,9 @@ security:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs.json, roles: PUBLIC_ACCESS }
+        #- { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 when@test:
     security:
         password_hashers:
@@ -85,3 +87,4 @@ when@test:
                 time_cost: 3 # Lowest possible value for argon
                 memory_cost: 10 # Lowest possible value for argon
 
+#
