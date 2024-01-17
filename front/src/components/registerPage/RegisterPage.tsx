@@ -1,8 +1,12 @@
 import React, { FormEvent, useState } from "react";
 import './registerPage.css'
+import UserInterface from "../../interfaces/UserInterface";
 
 const RegisterPage = () => {
-    const [newUser, setNewUser] = useState({})
+    const [newUser, setNewUser] = useState<UserInterface | undefined>()
+    const getRandom = () => {
+        return Math.trunc(Math.random() * 10000).toString()
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -38,6 +42,7 @@ const RegisterPage = () => {
                 <label htmlFor="confirm-password">Confirmer le mot de passe</label>
                 <input type="password" id="confirm-password" onChange={handleChange} name="confirm-password" />  
             </div>
+            <input type="hidden" id="id" value={getRandom()} name="id" />  
             <button type="button" className="submit-button" onClick={handleSubmit}>S'inscrire</button>
         </form>
         </section>
