@@ -40,15 +40,15 @@ class Planification
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
     #[Groups(['read', 'write'])]
-    private ?session $planifie = null;
+    private ?Session $planifie = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
     #[Groups(['read', 'write'])]
-    private ?course $organise = null;
+    private ?Course $organise = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
     #[Groups(['read', 'write'])]
-    private ?instructor $interviens = null;
+    private ?Instructor $interviens = null;
 
     public function getId(): ?int
     {
@@ -79,36 +79,36 @@ class Planification
         return $this;
     }
 
-    public function getPlanifie(): ?session
+    public function getPlanifie(): ?Session
     {
         return $this->planifie;
     }
 
-    public function setPlanifie(?session $planifie): static
+    public function setPlanifie(?Session $planifie): static
     {
         $this->planifie = $planifie;
 
         return $this;
     }
 
-    public function getOrganise(): ?course
+    public function getOrganise(): ?Course
     {
         return $this->organise;
     }
 
-    public function setOrganise(?course $organise): static
+    public function setOrganise(?Course $organise): static
     {
         $this->organise = $organise;
 
         return $this;
     }
 
-    public function getInterviens(): ?instructor
+    public function getInterviens(): ?Instructor
     {
         return $this->interviens;
     }
 
-    public function setInterviens(?instructor $interviens): static
+    public function setInterviens(?Instructor $interviens): static
     {
         $this->interviens = $interviens;
 

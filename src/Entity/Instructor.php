@@ -60,7 +60,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: course::class, inversedBy: 'instructors')]
+    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'instructors')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
