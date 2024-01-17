@@ -34,27 +34,34 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['read', 'write'])]
     private ?string $username = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['read', 'write'])]
     private ?string $lastName = null;
 
     #[ORM\OneToMany(mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[Groups(['read', 'write'])]
     private Collection $planifications;
 
     #[ORM\ManyToMany(targetEntity: course::class, inversedBy: 'instructors')]
+    #[Groups(['read', 'write'])]
     private Collection $dispense;
 
     public function __construct()
@@ -96,8 +103,8 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every instructor at least has ROLE_INSTRUCTOR
+        $roles[] = 'ROLE_INSTRUCTOR';
 
         return array_unique($roles);
     }
