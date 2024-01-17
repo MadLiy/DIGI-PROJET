@@ -11,11 +11,9 @@ const Courses: React.FC<UserProps> = ({ user }) => {
       {/* Visiteur */}
       {!user && <h2>Welcome visitor</h2>}
       {/* Formateur */}
-      {user?.role && user?.role.includes("formateur") && (
-        <h2>Welcome formateur</h2>
-      )}
+      {user?.role.includes("formateur") && <h2>Welcome formateur</h2>}
       {/* Student */}
-      {user?.role && user?.role.includes("student") && <h2>Welcome student</h2>}
+      {user?.role.includes("student") && <h2>Welcome student</h2>}
     </div>
   );
 };
