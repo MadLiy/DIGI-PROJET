@@ -2,8 +2,6 @@ import "./navBar.css";
 import { MdAccountCircle } from "react-icons/md";
 
 const NavBar = () => {
-  const isLogged = false;
-
   return (
     <ul className="nav-bar">
       <li>
@@ -12,7 +10,7 @@ const NavBar = () => {
       <li>Cours</li>
       <li>Révisions</li>
       <li>
-        <a href={isLogged ? "/profil" : "/login"}>
+        <a href="/profil">
           <MdAccountCircle className="profil-icon" />
         </a>
       </li>

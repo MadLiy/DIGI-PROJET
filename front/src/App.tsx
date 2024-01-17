@@ -13,7 +13,7 @@ function App() {
     <Routes>
       <Route path="/login" element={<LoginPage setUser={setUser} />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Home user={user} />} />
       <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
