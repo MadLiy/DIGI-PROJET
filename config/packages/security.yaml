@@ -5,37 +5,33 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_form_provider:
-            entity:
-                class: App\Entity\Instructor
-                property: username
         app_user_provider:
             entity:
-                class: App\Entity\Student
+                class: App\Entity\User
                 property: email
         # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        # loginform:
-        #     pattern: ^/api/form/login
-        #     provider: app_form_provider
-        #     stateless: true
-        #     json_login:
-        #         check_path: loginform_check
-        #         username_path: username
-        #         password_path: password
-        #         success_handler: lexik_jwt_authentication.handler.authentication_success
-        #         failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        # apiform:
-        #     pattern: ^/api/form/
-        #     stateless: true
-        #     provider: app_form_provider
-        #     jwt: ~
-        # form:
-        #     lazy: true
-        #     provider: app_form_provider
+        # # loginform:
+        # #     pattern: ^/api/form/login
+        # #     provider: app_form_provider
+        # #     stateless: true
+        # #     json_login:
+        # #         check_path: login_check
+        # #         username_path: username
+        # #         password_path: password
+        # #         success_handler: lexik_jwt_authentication.handler.authentication_success
+        # #         failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        # # apiform:
+        # #     pattern: ^/api/form/
+        # #     stateless: true
+        # #     provider: app_form_provider
+        # #     jwt: ~
+        # # form:
+        # #     lazy: true
+        # #     provider: app_form_provider
 
         login:
             pattern: ^/api/login
@@ -65,6 +61,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }

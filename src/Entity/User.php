@@ -8,14 +8,14 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\InstructorRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: InstructorRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
         new Delete()
     ]
 )]
-class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -35,7 +35,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Groups(['read', 'write'])]
-    private ?string $username = null;
+    private ?string $email = null;
 
     #[ORM\Column]
     #[Groups(['read', 'write'])]
@@ -60,14 +60,18 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'instructors')]
+    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
+
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    private Collection $participe;
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
         $this->dispense = new ArrayCollection();
+        $this->participe = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -75,14 +79,14 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    public function getEmail(): ?string
     {
-        return $this->username;
+        return $this->email;
     }
 
-    public function setUsername(string $username): static
+    public function setEmail(string $email): static
     {
-        $this->username = $username;
+        $this->email = $email;
 
         return $this;
     }
@@ -94,7 +98,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->email;
     }
 
     /**
@@ -103,8 +107,8 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every instructor at least has ROLE_INSTRUCTOR
-        $roles[] = 'ROLE_INSTRUCTOR';
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
@@ -202,7 +206,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dispense;
     }
 
-    public function addDispense(Course $dispense): static
+    public function addDispense(course $dispense): static
     {
         if (!$this->dispense->contains($dispense)) {
             $this->dispense->add($dispense);
@@ -211,9 +215,33 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeDispense(Course $dispense): static
+    public function removeDispense(course $dispense): static
     {
         $this->dispense->removeElement($dispense);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Session>
+     */
+    public function getParticipe(): Collection
+    {
+        return $this->participe;
+    }
+
+    public function addParticipe(Session $participe): static
+    {
+        if (!$this->participe->contains($participe)) {
+            $this->participe->add($participe);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipe(Session $participe): static
+    {
+        $this->participe->removeElement($participe);
 
         return $this;
     }

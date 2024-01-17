@@ -43,13 +43,14 @@ class Session
     #[ORM\OneToMany(mappedBy: 'planifie', targetEntity: Planification::class)]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Student::class, mappedBy: 'participent')]
-    private Collection $students;
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'participe')]
+    private Collection $users;
+
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
-        $this->students = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,29 +125,31 @@ class Session
     }
 
     /**
-     * @return Collection<int, Student>
+     * @return Collection<int, User>
      */
-    public function getStudents(): Collection
+    public function getUsers(): Collection
     {
-        return $this->students;
+        return $this->users;
     }
 
-    public function addStudent(Student $student): static
+    public function addUser(User $user): static
     {
-        if (!$this->students->contains($student)) {
-            $this->students->add($student);
-            $student->addParticipent($this);
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addParticipe($this);
         }
 
         return $this;
     }
 
-    public function removeStudent(Student $student): static
+    public function removeUser(User $user): static
     {
-        if ($this->students->removeElement($student)) {
-            $student->removeParticipent($this);
+        if ($this->users->removeElement($user)) {
+            $user->removeParticipe($this);
         }
 
         return $this;
     }
+
+   
 }
