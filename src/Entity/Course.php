@@ -43,14 +43,14 @@ class Course
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Instructor::class, mappedBy: 'dispense')]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'dispense')]
     #[Groups(['read', 'write'])]
-    private Collection $instructors;
+    private Collection $users;
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
-        $this->instructors = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,26 +113,26 @@ class Course
     }
 
     /**
-     * @return Collection<int, Instructor>
+     * @return Collection<int, User>
      */
-    public function getInstructors(): Collection
+    public function getUsers(): Collection
     {
-        return $this->instructors;
+        return $this->users;
     }
 
-    public function addInstructor(Instructor $instructor): static
+    public function addInstructor(User $instructor): static
     {
-        if (!$this->instructors->contains($instructor)) {
-            $this->instructors->add($instructor);
+        if (!$this->users->contains($instructor)) {
+            $this->users->add($instructor);
             $instructor->addDispense($this);
         }
 
         return $this;
     }
 
-    public function removeInstructor(Instructor $instructor): static
+    public function removeInstructor(User $instructor): static
     {
-        if ($this->instructors->removeElement($instructor)) {
+        if ($this->users->removeElement($instructor)) {
             $instructor->removeDispense($this);
         }
 
