@@ -15,8 +15,8 @@ const LoginPage = () => {
         // appeler method de connexion
     }
     return (
-        <section className="register">
-        <h2>Inscription</h2>
+        <section className="connect">
+        <h2>Connexion</h2>
         <form className="register-form">
             <div className="element email">
                 <label htmlFor="email">Email</label>
