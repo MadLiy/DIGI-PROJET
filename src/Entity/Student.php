@@ -34,21 +34,26 @@ class Student implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['read', 'write'])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['read', 'write'])]
     private ?string $lastName = null;
 
     #[ORM\ManyToMany(targetEntity: session::class, inversedBy: 'students')]
