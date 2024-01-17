@@ -46,10 +46,7 @@ class Planification
     #[Groups(['read', 'write'])]
     private ?course $organise = null;
 
-    #[ORM\ManyToOne(inversedBy: 'planifications')]
-    #[Groups(['read', 'write'])]
-    private ?instructor $interviens = null;
-
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -103,15 +100,4 @@ class Planification
         return $this;
     }
 
-    public function getInterviens(): ?instructor
-    {
-        return $this->interviens;
-    }
-
-    public function setInterviens(?instructor $interviens): static
-    {
-        $this->interviens = $interviens;
-
-        return $this;
-    }
 }
