@@ -3,6 +3,7 @@ import ErrorPage from './components/errorPage/ErrorPage'
 import Home from './components/home/Home'
 import RegisterPage from './components/registerPage/RegisterPage'
 import LoginPage from './components/loginPage/LoginPage'
+import CreateCourse from './components/createCourse/createCourse'
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/" element={<Home />} />
       <Route path="*" element={<ErrorPage />} />
+      <Route path="/create-course" element={<CreateCourse />} />
     </Routes>
   )
 }

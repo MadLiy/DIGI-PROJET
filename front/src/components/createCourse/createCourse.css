@@ -1,0 +1,19 @@
+.course {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    padding: 0 25%;
+}
+
+.element {
+    width: 100%;
+    margin: 5px;
+    padding: 5px;
+}
+
+h2 {
+    margin: 5px;
+    font-size: 30px;
+}
