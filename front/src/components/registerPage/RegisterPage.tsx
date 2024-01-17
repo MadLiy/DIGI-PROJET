@@ -12,7 +12,7 @@ const RegisterPage = () => {
     lastName: "",
     password: "",
     mail: "",
-    confirmPassword: "",
+    role: ["student"],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +23,7 @@ const RegisterPage = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     console.log(newUser);
+    // verification du form
     // appeler method de création user
   };
   return (

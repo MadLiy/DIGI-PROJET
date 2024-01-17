@@ -1,15 +1,23 @@
-import './navBar.css'
+import "./navBar.css";
 import { MdAccountCircle } from "react-icons/md";
 
 const NavBar = () => {
-    return (
-        <ul className="nav-bar">
-            <li>Accueil</li>
-            <li>Cours</li>
-            <li>Révisions</li>
-            <li><MdAccountCircle className="profil-icon"/></li>
-        </ul>
-    );
-}
+  const isLogged = false;
+
+  return (
+    <ul className="nav-bar">
+      <li>
+        <a href="/">Accueil</a>
+      </li>
+      <li>Cours</li>
+      <li>Révisions</li>
+      <li>
+        <a href={isLogged ? "/profil" : "/login"}>
+          <MdAccountCircle className="profil-icon" />
+        </a>
+      </li>
+    </ul>
+  );
+};
 
 export default NavBar;

@@ -3,6 +3,7 @@ export default interface UserInterface {
   name: string;
   lastName: string;
   password: string;
-  mail: string;
-  confirmPassword: string;
+  mail?: string;
+  username?: string;
+  role: string[];
 }
