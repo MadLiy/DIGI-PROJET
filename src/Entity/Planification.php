@@ -31,18 +31,23 @@ class Planification
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $heure_debut = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
+    #[Groups(['read', 'write'])]
     private ?session $planifie = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
+    #[Groups(['read', 'write'])]
     private ?course $organise = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
+    #[Groups(['read', 'write'])]
     private ?instructor $interviens = null;
 
     public function getId(): ?int

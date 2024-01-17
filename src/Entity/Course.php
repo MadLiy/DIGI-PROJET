@@ -32,15 +32,19 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?float $duree = null;
 
     #[ORM\OneToMany(mappedBy: 'organise', targetEntity: Planification::class)]
+    #[Groups(['read', 'write'])]
     private Collection $planifications;
 
     #[ORM\ManyToMany(targetEntity: Instructor::class, mappedBy: 'dispense')]
+    #[Groups(['read', 'write'])]
     private Collection $instructors;
 
     public function __construct()
