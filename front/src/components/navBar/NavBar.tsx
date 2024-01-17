@@ -1,4 +1,3 @@
-import React from "react";
 import './navBar.css'
 import { MdAccountCircle } from "react-icons/md";
 
