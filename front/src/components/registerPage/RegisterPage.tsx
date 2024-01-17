@@ -5,8 +5,8 @@ const RegisterPage = () => {
     const [newUser, setNewUser] = useState({})
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
-        setNewUser({ ...setNewUser, [name]: value })
+        const { name, value } = e.target;
+        setNewUser(prevUser => ({ ...prevUser, [name]: value }));
     }
 
     const handleSubmit = (e: FormEvent) => {

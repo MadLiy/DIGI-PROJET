@@ -8,6 +8,7 @@
 
 .element{
     width: 100%;
+    margin: 0 10px;
     display: flex;
     flex-direction: column;
     margin-bottom: 10px;
@@ -20,4 +21,9 @@ form {
 
 input{
     border-radius: 5px;
+    height: 25px;
+}
+
+.submit-button {
+    padding: 5px 10px;
 }
