@@ -56,7 +56,7 @@ class Student implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private ?string $lastName = null;
 
-    #[ORM\ManyToMany(targetEntity: session::class, inversedBy: 'students')]
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'students')]
     private Collection $participent;
 
     public function __construct()

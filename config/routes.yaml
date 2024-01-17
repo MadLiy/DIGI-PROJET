@@ -7,5 +7,5 @@ login_check:
     path: /api/login_check
     #methods: ["POST"]
 loginform_check:
-    path: /api/form/login_check
+    path: /api/form/loginform_check
     #methods: ["POST"]

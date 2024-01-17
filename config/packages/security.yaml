@@ -23,7 +23,7 @@ security:
             provider: app_form_provider
             stateless: true
             json_login:
-                check_path: loginfor_check
+                check_path: loginform_check
                 username_path: username
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
