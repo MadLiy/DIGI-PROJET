@@ -43,10 +43,20 @@ class Session
     #[ORM\OneToMany(mappedBy: 'planifie', targetEntity: Planification::class)]
     private Collection $planifications;
 
+<<<<<<< HEAD
+=======
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'participe')]
+    private Collection $users;
+
+>>>>>>> main
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
+<<<<<<< HEAD
+=======
+        $this->users = new ArrayCollection();
+>>>>>>> main
     }
 
     public function getId(): ?int
@@ -120,4 +130,35 @@ class Session
         return $this;
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addParticipe($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeParticipe($this);
+        }
+
+        return $this;
+    }
+
+   
+>>>>>>> main
 }
