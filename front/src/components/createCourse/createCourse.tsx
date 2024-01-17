@@ -15,6 +15,7 @@ const CreateCourse = () => {
                     <label htmlFor="duration">Durée</label>
                     <input type="text" id="duration" name="duration"/>
                 </div>
+                <button type="submit" className="button-create">Créer mon cours</button>
             </form>
         </section>
     );
