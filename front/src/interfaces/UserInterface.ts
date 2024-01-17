@@ -4,4 +4,5 @@ export default interface UserInterface {
   lastName: string;
   password: string;
   mail: string;
+  confirmPassword: string;
 }
