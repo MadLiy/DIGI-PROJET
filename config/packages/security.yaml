@@ -5,10 +5,14 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
+        app_form_provider:
+            entity:
+                class: App\Entity\Instructor
+                property: username
         app_user_provider:
             entity:
-                class: App\Entity\Formateur
-                property: username
+                class: App\Entity\Student
+                property: email
         # used to reload user from session & other features (e.g. switch_user)
     firewalls:
         dev:
@@ -16,11 +20,11 @@ security:
             security: false
         login:
             pattern: ^/api/login
-            provider: app_user_provider
+            provider: app_form_provider
             stateless: true
             json_login:
                 check_path: login_check
-                username_path: email
+                username_path: username
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
