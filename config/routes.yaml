@@ -1,0 +1,11 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+login_check:
+    path: /api/login_check
+    #methods: ["POST"]
+loginform_check:
+    path: /api/form/loginform_check
+    #methods: ["POST"]
