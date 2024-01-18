@@ -206,7 +206,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dispense;
     }
 
-    public function addDispense(course $dispense): static
+    public function addDispense(Course $dispense): static
     {
         if (!$this->dispense->contains($dispense)) {
             $this->dispense->add($dispense);
@@ -215,7 +215,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeDispense(course $dispense): static
+    public function removeDispense(Course $dispense): static
     {
         $this->dispense->removeElement($dispense);
 

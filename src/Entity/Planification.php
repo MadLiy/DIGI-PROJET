@@ -48,7 +48,7 @@ class Planification
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
     #[Groups(['read', 'write'])]
-    private ?instructor $interviens = null;
+    private ?User $interviens = null;
 
     public function getId(): ?int
     {
@@ -103,12 +103,12 @@ class Planification
         return $this;
     }
 
-    public function getInterviens(): ?instructor
+    public function getInterviens(): ?User
     {
         return $this->interviens;
     }
 
-    public function setInterviens(?instructor $interviens): static
+    public function setInterviens(?User $interviens): static
     {
         $this->interviens = $interviens;
 
