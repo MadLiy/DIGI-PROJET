@@ -4,13 +4,15 @@ interface CourseProps {
   course: CourseInterface | undefined;
 }
 const CourseCard: React.FC<CourseProps> = ({ course }) => {
-  const convertTime = (time: number) => {
-    let hours = Math.floor(time / 60);
-    let min = time % 60;
-    if (hours > 0) {
-      return hours + "h" + (min > 0 ? min + "min" : "");
+  const convertTime = (time: number | undefined) => {
+    if (time) {
+      let hours = Math.floor(time / 60);
+      let min = time % 60;
+      if (hours > 0) {
+        return hours + "h" + (min > 0 ? min + "min" : "");
+      }
+      return min + "min";
     }
-    return min + "min";
   };
 
   return (
