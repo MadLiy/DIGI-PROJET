@@ -43,6 +43,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: "Cet email {{ value }} n'est pas un email valide."
     )]
     #[Groups(['read', 'write'])]
+    #[Assert\Unique(
+        message: "Cette addresse mail est dèja utilisée"
+    )]
     private ?string $email = null;
 
     #[ORM\Column]

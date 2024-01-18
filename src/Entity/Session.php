@@ -12,6 +12,7 @@ use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[ApiResource(
@@ -32,14 +33,32 @@ class Session
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Assert\Unique(
+        message: "Ce nom de Session est dèja utilisé"
+    )]
     #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[assert\Date(
+        message: "Ceci n'est pas une date valide"
+    )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[assert\Date(
+        message: "Ceci n'est pas une date valide"
+    )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_fin = null;
 

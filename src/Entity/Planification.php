@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PlanificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlanificationRepository::class)]
 #[ApiResource(
@@ -31,11 +32,23 @@ class Planification
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[assert\Date(
+        message: "Ceci n'est pas une date valide"
+    )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
     #[Groups(['read', 'write'])]
+    #[assert\Time(
+        message: "Ceci n'est pas une heure valide"
+    )]
     private ?\DateTimeImmutable $heure_debut = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
