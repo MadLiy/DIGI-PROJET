@@ -1,7 +1,7 @@
 import { useState } from "react";
 import UserInterface from "../../interfaces/UserInterface";
 import "./courses.css";
-import CourseCard from "./CourseCard";
+import CourseCard from "./courseCard/CourseCard";
 import CourseInterface from "../../interfaces/Course";
 
 interface UserProps {
@@ -24,12 +24,9 @@ const Courses: React.FC<UserProps> = ({ user }) => {
       {user?.roles.includes("formator") && <h2>Welcome formator</h2>}
       {/* Student */}
       {user?.roles.includes("student") && <h2>Welcome student</h2>}
+      <h2>Liste des cours :</h2>
       {courses.map((course: CourseInterface) => {
-        return (
-          <div>
-            <CourseCard course={course} key={course.id} />
-          </div>
-        );
+        return <CourseCard course={course} key={course.id} />;
       })}
     </div>
   );

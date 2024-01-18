@@ -1,4 +1,5 @@
-import CourseInterface from "../../interfaces/Course";
+import CourseInterface from "../../../interfaces/Course";
+import "./courseCard.css";
 
 interface CourseProps {
   course: CourseInterface | undefined;
@@ -16,9 +17,9 @@ const CourseCard: React.FC<CourseProps> = ({ course }) => {
   };
 
   return (
-    <div>
-      <p>Nom: {course?.name}</p>
-      <p>Durée: {convertTime(course?.duree)}</p>
+    <div className="course-card">
+      <p className="course-element">Nom: {course?.name}</p>
+      <p className="course-element">Durée: {convertTime(course?.duree)}</p>
     </div>
   );
 };
