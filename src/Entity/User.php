@@ -8,14 +8,14 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\StudentRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: StudentRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
@@ -26,7 +26,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
         new Delete()
     ]
 )]
-class Student implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -56,12 +56,22 @@ class Student implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private ?string $lastName = null;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'students')]
-    private Collection $participent;
+    #[ORM\OneToMany(mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[Groups(['read', 'write'])]
+    private Collection $planifications;
+
+    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
+    #[Groups(['read', 'write'])]
+    private Collection $dispense;
+
+    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    private Collection $participe;
 
     public function __construct()
     {
-        $this->participent = new ArrayCollection();
+        $this->planifications = new ArrayCollection();
+        $this->dispense = new ArrayCollection();
+        $this->participe = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -159,25 +169,79 @@ class Student implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, session>
+     * @return Collection<int, Planification>
      */
-    public function getParticipent(): Collection
+    public function getPlanifications(): Collection
     {
-        return $this->participent;
+        return $this->planifications;
     }
 
-    public function addParticipent(session $participent): static
+    public function addPlanification(Planification $planification): static
     {
-        if (!$this->participent->contains($participent)) {
-            $this->participent->add($participent);
+        if (!$this->planifications->contains($planification)) {
+            $this->planifications->add($planification);
+            $planification->setInterviens($this);
         }
 
         return $this;
     }
 
-    public function removeParticipent(session $participent): static
+    public function removePlanification(Planification $planification): static
     {
-        $this->participent->removeElement($participent);
+        if ($this->planifications->removeElement($planification)) {
+            // set the owning side to null (unless already changed)
+            if ($planification->getInterviens() === $this) {
+                $planification->setInterviens(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, course>
+     */
+    public function getDispense(): Collection
+    {
+        return $this->dispense;
+    }
+
+    public function addDispense(course $dispense): static
+    {
+        if (!$this->dispense->contains($dispense)) {
+            $this->dispense->add($dispense);
+        }
+
+        return $this;
+    }
+
+    public function removeDispense(course $dispense): static
+    {
+        $this->dispense->removeElement($dispense);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Session>
+     */
+    public function getParticipe(): Collection
+    {
+        return $this->participe;
+    }
+
+    public function addParticipe(Session $participe): static
+    {
+        if (!$this->participe->contains($participe)) {
+            $this->participe->add($participe);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipe(Session $participe): static
+    {
+        $this->participe->removeElement($participe);
 
         return $this;
     }
