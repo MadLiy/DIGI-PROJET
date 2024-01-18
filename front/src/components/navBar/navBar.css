@@ -11,6 +11,12 @@
 
 li {
     list-style: none;
+    a{
+    text-decoration: none;
+        &:hover {
+            cursor: pointer;
+        }
+    }
 }
 
 .profil-icon {
