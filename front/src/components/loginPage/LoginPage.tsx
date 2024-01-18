@@ -16,6 +16,35 @@ const LoginPage: React.FC<UserProps> = ({ setUser }) => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    let requestInfo: Object = {
+      method: 'POST',
+      body: JSON.stringify(
+        authUser
+      ),
+      headers: {
+        'Content-type': 'application/json',
+      }
+    };
+    fetch('https://127.0.0.1:8002/api/login_check', requestInfo)
+      .then(function(res){
+        if (res.ok){
+          res.json()
+            .then(function(json){
+              let token = json.token;
+              console.log(`token: `, token);
+              document.cookie = "token" + token;
+            })
+        } else {
+          if (res.status == 401){
+            alert('Mauvais login ou mot de passe');
+          } else {
+            alert('Mauavaise réponse réseau');
+          }
+        }
+      })
+      .catch(function(error){
+        alert("error : " + error);
+      })
     console.log(authUser);
     // appeler method de connexion
     // recup retour puis setUSer()
