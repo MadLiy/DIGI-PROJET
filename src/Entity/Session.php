@@ -43,20 +43,14 @@ class Session
     #[ORM\OneToMany(mappedBy: 'planifie', targetEntity: Planification::class)]
     private Collection $planifications;
 
-<<<<<<< HEAD
-=======
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'participe')]
     private Collection $users;
 
->>>>>>> main
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
-<<<<<<< HEAD
-=======
         $this->users = new ArrayCollection();
->>>>>>> main
     }
 
     public function getId(): ?int
@@ -130,8 +124,6 @@ class Session
         return $this;
     }
 
-<<<<<<< HEAD
-=======
     /**
      * @return Collection<int, User>
      */
@@ -158,7 +150,4 @@ class Session
 
         return $this;
     }
-
-   
->>>>>>> main
 }
