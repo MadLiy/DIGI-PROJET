@@ -14,8 +14,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity("email")]
 #[ApiResource(
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
@@ -34,7 +38,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
     #[Groups(['read', 'write'])]
+    #[Assert\Email(
+        message: "Cette addresse mail est dèja utilisée"
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -46,25 +56,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Groups(['read', 'write'])]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Assert\PasswordStrength([
+        'minScore' => PasswordStrength::STRENGTH_STRONG,
+        'message' => 'Votre mot de passe est trop simple et ne respecte pas les règles de securité'
+    ])]
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
     #[Groups(['read', 'write'])]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 50)]
     #[Groups(['read', 'write'])]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[ORM\OneToMany(mappedBy: 'interviens',fetch: "EAGER", targetEntity: Planification::class)]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Course::class,fetch: "EAGER", inversedBy: 'users')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class,fetch: "EAGER", inversedBy: 'users')]
+    #[Groups(['read', 'write'])]
     private Collection $participe;
 
     public function __construct()
