@@ -32,12 +32,15 @@ class Session
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_fin = null;
 
     #[ORM\OneToMany(mappedBy: 'planifie', targetEntity: Planification::class)]
