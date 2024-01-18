@@ -12,8 +12,11 @@ use App\Repository\SessionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
+#[UniqueEntity("name")]
 #[ApiResource(
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
@@ -32,21 +35,41 @@ class Session
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Assert\Unique(
+        message: "Ce nom de Session est dèja utilisé"
+    )]
     #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[assert\Date(
+        message: "Ceci n'est pas une date valide"
+    )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[assert\Date(
+        message: "Ceci n'est pas une date valide"
+    )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_fin = null;
 
     #[ORM\OneToMany(mappedBy: 'planifie', targetEntity: Planification::class)]
+    #[Groups(['read', 'write'])]
     private Collection $planifications;
 
     #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'participe')]
+    #[Groups(['read', 'write'])]
     private Collection $users;
 
 
@@ -153,6 +176,4 @@ class Session
 
         return $this;
     }
-
-   
 }
