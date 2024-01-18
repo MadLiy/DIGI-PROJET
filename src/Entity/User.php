@@ -16,8 +16,10 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity("email")]
 #[ApiResource(
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
@@ -39,11 +41,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\Email(
-        message: "Cet email {{ value }} n'est pas un email valide."
-    )]
     #[Groups(['read', 'write'])]
-    #[Assert\Unique(
+    #[Assert\Email(
         message: "Cette addresse mail est dèja utilisée"
     )]
     private ?string $email = null;

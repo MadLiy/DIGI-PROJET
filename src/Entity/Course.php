@@ -14,9 +14,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Mime\Message;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
-#[ApiResource(
+#[UniqueEntity("name")]
+#[ApiResourc
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
@@ -47,11 +49,11 @@ class Course
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\Range(
-        min : 0.5,
-        max : 8,
-        message: 'Le cours doit durer entre {{ min }} heure et {{ max }} heures.',
-    )]
+    #[Assert\Range([
+        'min' => 0.5,
+        'max' => 8,
+        "message"=> 'Le cours doit durer entre {{ min }} heure et {{ max }} heures.',
+    ])]
     #[Groups(['read', 'write'])]
     private ?float $duree = null;
 
