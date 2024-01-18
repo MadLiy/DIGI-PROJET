@@ -4,7 +4,7 @@ import UserInterface from "../../interfaces/UserInterface";
 
 const RegisterPage = () => {
   const getRandom = () => {
-    return +Math.trunc(Math.random() * 10000).toString();
+    return Math.trunc(Math.random() * 10000);
   };
   const [newUser, setNewUser] = useState<UserInterface>({
     id: getRandom(),

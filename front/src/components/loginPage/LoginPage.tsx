@@ -16,7 +16,7 @@ const LoginPage: React.FC<UserProps> = ({ setUser }) => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    let requestInfo: Object = {
+    const requestInfo: Object = {
       method: 'POST',
       body: JSON.stringify(
         authUser
@@ -25,12 +25,12 @@ const LoginPage: React.FC<UserProps> = ({ setUser }) => {
         'Content-type': 'application/json',
       }
     };
-    fetch('https://127.0.0.1:8002/api/login_check', requestInfo)
+    fetch('https://127.0.0.1:8000/api/login_check', requestInfo)
       .then(function(res){
         if (res.ok){
           res.json()
             .then(function(json){
-              let token = json.token;
+              const token = json.token;
               console.log(`token: `, token);
               document.cookie = "token" + token;
             })

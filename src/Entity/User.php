@@ -27,8 +27,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
     operations: [
         new Get(),
         new Get(
-            uriTemplate: '/users/{email}', 
-            requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'], 
+            uriTemplate: '/users/{email}',
+            requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'],
         ),
         new GetCollection(),
         new Post(security: "is_granted('ROLE_ADMIN')"),
@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: "Ce champs ne peux pas être vide"
     )]
     #[Groups(['read', 'write'])]
-    
+
     private ?string $email = null;
 
     #[ORM\Column]
@@ -83,15 +83,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(fetch: "EAGER",mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[ORM\OneToMany(fetch: "EAGER", mappedBy: 'interviens', targetEntity: Planification::class)]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(fetch: "EAGER",targetEntity: Course::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(fetch: "EAGER", targetEntity: Course::class, inversedBy: 'users')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(fetch: "EAGER",targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(fetch: "EAGER", targetEntity: Session::class, inversedBy: 'users')]
     private Collection $participe;
 
     public function __construct()
