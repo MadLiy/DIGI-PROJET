@@ -49,11 +49,11 @@ class Course
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\Range([
-        'min' => 0.5,
-        'max' => 8,
-        "message"=> 'Le cours doit durer entre {{ min }} heure et {{ max }} heures.',
-    ])]
+    // #[Assert\Range([
+    //     'min' => 0.5,
+    //     'max' => 8,
+    //     "message"=> 'Le cours doit durer entre {{ min }} heure et {{ max }} heures.',
+    // ])]
     #[Groups(['read', 'write'])]
     private ?float $duree = null;
 

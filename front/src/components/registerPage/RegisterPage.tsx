@@ -11,8 +11,8 @@ const RegisterPage = () => {
     name: "",
     lastName: "",
     password: "",
-    mail: "",
-    role: ["student"],
+    email: "",
+    roles: ["student"],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
