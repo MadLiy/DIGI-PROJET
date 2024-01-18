@@ -10,6 +10,7 @@ interface UserProps {
 const Courses: React.FC<UserProps> = ({ user }) => {
   const [courses, setCourses] = useState([
     { id: 1, name: "Java SEE", duree: 60 },
+    { id: 2, name: "Angular", duree: 180 },
   ]);
 
   console.log(user);

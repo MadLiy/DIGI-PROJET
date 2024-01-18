@@ -4,7 +4,7 @@ interface CourseProps {
   course: CourseInterface | undefined;
 }
 const CourseCard: React.FC<CourseProps> = ({ course }) => {
-  const convertTime = (time) => {
+  const convertTime = (time: number) => {
     let hours = Math.floor(time / 60);
     let min = time % 60;
     if (hours > 0) {
@@ -16,7 +16,7 @@ const CourseCard: React.FC<CourseProps> = ({ course }) => {
   return (
     <div>
       <p>Nom: {course?.name}</p>
-      <p>Durée {convertTime(course?.duree)}</p>
+      <p>Durée: {convertTime(course?.duree)}</p>
     </div>
   );
 };
