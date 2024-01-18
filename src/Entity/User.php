@@ -56,15 +56,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[ORM\OneToMany(fetch: "EAGER",mappedBy: 'interviens', targetEntity: Planification::class)]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Course::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(fetch: "EAGER",targetEntity: Course::class, inversedBy: 'users')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(fetch: "EAGER",targetEntity: Session::class, inversedBy: 'users')]
     private Collection $participe;
 
     public function __construct()
