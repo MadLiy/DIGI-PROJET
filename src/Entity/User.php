@@ -24,11 +24,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
-        new Get(),
         new Get(
             uriTemplate: '/users/{email}', 
             requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'], 
         ),
+        new Get(),
         new GetCollection(),
         new Post(security: "is_granted('ROLE_ADMIN')"),
         new Delete()
@@ -44,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180, unique: true)]
     #[Groups(['read', 'write'])]
-    
+
     private ?string $email = null;
 
     #[ORM\Column]
@@ -118,7 +118,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = 'ROLE_STUDENT';
 
         return array_unique($roles);
     }
