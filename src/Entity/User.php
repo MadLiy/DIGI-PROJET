@@ -16,23 +16,21 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity("email")]
 #[ApiResource(
-    // security: "is_granted('ROLE_USER')",
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
-        new Get(),
-        new Get(
-            uriTemplate: '/users/{email}', 
-            requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'], 
-        ),
-        new GetCollection(),
-        new Post(security: "is_granted('ROLE_ADMIN')"),
-        new Delete()
+        new Get(security: "is_granted('ROLE_STUDENT') and object == user" || "is_granted('ROLE_ADMIN"),
+        new GetCollection(security: "is_granted('ROLE_ADMIN')"),
+        new Post(security: "is_granted('ROLE_ADMIN') or object == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object == user")
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
@@ -48,7 +46,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: "Ce champs ne peux pas être vide"
     )]
     #[Groups(['read', 'write'])]
-    
+    #[Assert\Email(
+        message: "Cette addresse mail est dèja utilisée"
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -83,15 +83,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(fetch: "EAGER",mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[ORM\OneToMany(mappedBy: 'interviens',fetch: "EAGER", targetEntity: Planification::class)]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(fetch: "EAGER",targetEntity: Course::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Course::class,fetch: "EAGER", inversedBy: 'users')]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(fetch: "EAGER",targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class,fetch: "EAGER", inversedBy: 'users')]
+    #[Groups(['read', 'write'])]
     private Collection $participe;
 
     public function __construct()
@@ -134,8 +135,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every user at least has ROLE_STUDENT
+        $roles[] = 'ROLE_STUDENT';
 
         return array_unique($roles);
     }
