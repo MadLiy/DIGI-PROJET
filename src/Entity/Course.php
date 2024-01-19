@@ -12,16 +12,21 @@ use App\Repository\CourseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
+#[UniqueEntity("name")]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Delete()
+        new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
 class Course
@@ -32,21 +37,37 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Assert\Unique(
+        message : "Ce nom de cours est déja utilisé"
+    )]
+    #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Assert\Range(min: 0.5,
+                   max: 8,   
+                   notInRangeMessage: "Le cours doit durer au minimum {{ min }} heure et au maximum {{ max }} heures.")]
+    #[Groups(['read', 'write'])]
     private ?float $duree = null;
 
     #[ORM\OneToMany(mappedBy: 'organise', targetEntity: Planification::class)]
+    #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Instructor::class, mappedBy: 'dispense')]
-    private Collection $instructors;
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'dispense')]
+    #[Groups(['read', 'write'])]
+    private Collection $users;
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
-        $this->instructors = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -109,26 +130,26 @@ class Course
     }
 
     /**
-     * @return Collection<int, Instructor>
+     * @return Collection<int, User>
      */
-    public function getInstructors(): Collection
+    public function getUsers(): Collection
     {
-        return $this->instructors;
+        return $this->users;
     }
 
-    public function addInstructor(Instructor $instructor): static
+    public function addInstructor(User $instructor): static
     {
-        if (!$this->instructors->contains($instructor)) {
-            $this->instructors->add($instructor);
+        if (!$this->users->contains($instructor)) {
+            $this->users->add($instructor);
             $instructor->addDispense($this);
         }
 
         return $this;
     }
 
-    public function removeInstructor(Instructor $instructor): static
+    public function removeInstructor(User $instructor): static
     {
-        if ($this->instructors->removeElement($instructor)) {
+        if ($this->users->removeElement($instructor)) {
             $instructor->removeDispense($this);
         }
 

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block main %}
+    <h1> {{ title }} </h1>
+
+    {% block javascripts %}
+    <script src="js/login.js" defer></script>
+    {% endblock %}
+
+{% endblock %}

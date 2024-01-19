@@ -11,9 +11,11 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PlanificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlanificationRepository::class)]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
@@ -31,19 +33,36 @@ class Planification
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[assert\Date(
+        message: "Ceci n'est pas une date valide"
+    )]
+    #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Groups(['read', 'write'])]
+    #[assert\Time(
+        message: "Ceci n'est pas une heure valide"
+    )]
     private ?\DateTimeImmutable $heure_debut = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
-    private ?session $planifie = null;
+    #[Groups(['read', 'write'])]
+    private ?Session $planifie = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
-    private ?course $organise = null;
+    #[Groups(['read', 'write'])]
+    private ?Course $organise = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
-    private ?instructor $interviens = null;
+    #[Groups(['read', 'write'])]
+    private ?User $interviens = null;
 
     public function getId(): ?int
     {
@@ -74,36 +93,36 @@ class Planification
         return $this;
     }
 
-    public function getPlanifie(): ?session
+    public function getPlanifie(): ?Session
     {
         return $this->planifie;
     }
 
-    public function setPlanifie(?session $planifie): static
+    public function setPlanifie(?Session $planifie): static
     {
         $this->planifie = $planifie;
 
         return $this;
     }
 
-    public function getOrganise(): ?course
+    public function getOrganise(): ?Course
     {
         return $this->organise;
     }
 
-    public function setOrganise(?course $organise): static
+    public function setOrganise(?Course $organise): static
     {
         $this->organise = $organise;
 
         return $this;
     }
 
-    public function getInterviens(): ?instructor
+    public function getInterviens(): ?User
     {
         return $this->interviens;
     }
 
-    public function setInterviens(?instructor $interviens): static
+    public function setInterviens(?User $interviens): static
     {
         $this->interviens = $interviens;
 

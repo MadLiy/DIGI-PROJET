@@ -2,31 +2,43 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
-use App\Repository\InstructorRepository;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-#[ORM\Entity(repositoryClass: InstructorRepository::class)]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
+#[UniqueEntity("email")]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
+        new Get(
+            uriTemplate: '/users/{email}', 
+            requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'], 
+        ),
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Delete()
+        new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
-class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
+#[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -34,33 +46,64 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    private ?string $username = null;
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Groups(['read', 'write'])]
+    #[Assert\Email(
+        message: "Cette addresse mail est dèja utilisée"
+    )]
+    private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(['read', 'write'])]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Assert\PasswordStrength([
+        'minScore' => PasswordStrength::STRENGTH_STRONG,
+        'message' => 'Votre mot de passe est trop simple et ne respecte pas les règles de securité'
+    ])]
     private ?string $password = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(['read', 'write'])]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['read', 'write'])]
+    #[assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[ORM\OneToMany(mappedBy: 'interviens',fetch: "EAGER", targetEntity: Planification::class)]
+    #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: course::class, inversedBy: 'instructors')]
+    #[ORM\ManyToMany(targetEntity: Course::class,fetch: "EAGER", inversedBy: 'users')]
+    #[Groups(['read', 'write'])]
     private Collection $dispense;
+
+    #[ORM\ManyToMany(targetEntity: Session::class,fetch: "EAGER", inversedBy: 'users')]
+    #[Groups(['read', 'write'])]
+    private Collection $participe;
 
     public function __construct()
     {
         $this->planifications = new ArrayCollection();
         $this->dispense = new ArrayCollection();
+        $this->participe = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -68,14 +111,14 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getUsername(): ?string
+    public function getEmail(): ?string
     {
-        return $this->username;
+        return $this->email;
     }
 
-    public function setUsername(string $username): static
+    public function setEmail(string $email): static
     {
-        $this->username = $username;
+        $this->email = $email;
 
         return $this;
     }
@@ -87,7 +130,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->email;
     }
 
     /**
@@ -96,8 +139,8 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every user at least has ROLE_STUDENT
+        $roles[] = 'ROLE_STUDENT';
 
         return array_unique($roles);
     }
@@ -195,7 +238,7 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dispense;
     }
 
-    public function addDispense(course $dispense): static
+    public function addDispense(Course $dispense): static
     {
         if (!$this->dispense->contains($dispense)) {
             $this->dispense->add($dispense);
@@ -204,9 +247,33 @@ class Instructor implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeDispense(course $dispense): static
+    public function removeDispense(Course $dispense): static
     {
         $this->dispense->removeElement($dispense);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Session>
+     */
+    public function getParticipe(): Collection
+    {
+        return $this->participe;
+    }
+
+    public function addParticipe(Session $participe): static
+    {
+        if (!$this->participe->contains($participe)) {
+            $this->participe->add($participe);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipe(Session $participe): static
+    {
+        $this->participe->removeElement($participe);
 
         return $this;
     }
