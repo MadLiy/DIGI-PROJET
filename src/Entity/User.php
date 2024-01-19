@@ -21,13 +21,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity("email")]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Delete()
+        new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -131,8 +132,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every user at least has ROLE_STUDENT
+        $roles[] = 'ROLE_STUDENT';
 
         return array_unique($roles);
     }

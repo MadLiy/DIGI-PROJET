@@ -18,13 +18,14 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[UniqueEntity("name")]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Delete()
+        new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
 class Session

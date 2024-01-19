@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlanificationRepository::class)]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
