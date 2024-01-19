@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -25,12 +27,17 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
+        new Get(
+            uriTemplate: '/users/{email}', 
+            requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'], 
+        ),
         new Get(),
         new GetCollection(),
         new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
         new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -231,7 +238,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->dispense;
     }
 
-    public function addDispense(course $dispense): static
+    public function addDispense(Course $dispense): static
     {
         if (!$this->dispense->contains($dispense)) {
             $this->dispense->add($dispense);
@@ -240,7 +247,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function removeDispense(course $dispense): static
+    public function removeDispense(Course $dispense): static
     {
         $this->dispense->removeElement($dispense);
 
