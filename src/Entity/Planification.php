@@ -8,12 +8,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
-use App\Dto\PlanificationsDtoWrite\PlanificationsDtoWrite;
 use App\Repository\PlanificationRepository;
-use App\State\PlanificationProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: PlanificationRepository::class)]
 #[ApiResource(
@@ -23,7 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(input: PlanificationsDtoWrite::class, processor:PlanificationProcessor::class),
+        new Post(),
         new Delete()
     ]
 )]
@@ -38,9 +37,7 @@ class Planification
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[assert\Date(
-        message: "Ceci n'est pas une date valide"
-    )]
+
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
@@ -49,9 +46,7 @@ class Planification
         message: "Ce champs ne peux pas être vide"
     )]
     #[Groups(['read', 'write'])]
-    #[assert\Time(
-        message: "Ceci n'est pas une heure valide"
-    )]
+
     private ?\DateTimeImmutable $heure_debut = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]

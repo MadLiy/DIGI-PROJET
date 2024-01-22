@@ -1,13 +1,15 @@
 <?php
-namespace App\Dto\PlanificationsDtoWrite;
 
-class PlanificationsDtoWrite{
+namespace App\Dto\Planifications\Write;
+
+class PlanificationsDtoWrite
+{
     public function __construct(
-        int $session_id,
-        int $intervenant_id,
-        int $cours_id,
-        string $date_debut,
-        string $heure_debut,
-    )
-    {}
+        public string $date_debut,
+        public string $heure_debut,
+        public int $session_id,
+        public int $intervenant_id,
+        public int $cours_id,
+    ) {
+    }
 }

@@ -34,7 +34,7 @@ security:
         # #     provider: app_form_provider
 
         login:
-            pattern: ^/api/login
+            # pattern: ^/api/login
             provider: app_user_provider
             stateless: true
             json_login:
@@ -43,14 +43,16 @@ security:
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
+            jwt: ~
+               
         api:
             pattern: ^/api/
             stateless: true
             provider: app_user_provider
             jwt: ~
-        main:
-            lazy: true
-            provider: app_user_provider
+        # main:
+        #     lazy: true
+        #     provider: app_user_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
