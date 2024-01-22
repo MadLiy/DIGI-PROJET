@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Patch;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -30,7 +31,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
         new Get(security: "is_granted('ROLE_STUDENT') and object == user" || "is_granted('ROLE_ADMIN"),
         new GetCollection(security: "is_granted('ROLE_ADMIN')"),
         new Post(security: "is_granted('ROLE_ADMIN') or object == user"),
-        new Delete(security: "is_granted('ROLE_ADMIN') or object == user")
+        new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
+        new Patch(security: "is_granted('ROLE_ADMIN') or object == user")
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
