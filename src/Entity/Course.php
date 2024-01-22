@@ -40,9 +40,6 @@ class Course
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\Unique(
-        message : "Ce nom de cours est déja utilisé"
-    )]
     #[Groups(['read', 'write'])]
     private ?string $name = null;
 

@@ -18,7 +18,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 #[ORM\Entity(repositoryClass: SessionRepository::class)]
 #[UniqueEntity("name")]
 #[ApiResource(
-    security:"is_granted('ROLE_STUDENT')",
+    security: "is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
@@ -39,9 +39,9 @@ class Session
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\Unique(
-        message: "Ce nom de Session est dèja utilisé"
-    )]
+    // #[Assert\Unique(
+    //     message: "Ce nom de Session est dèja utilisé"
+    // )]
     #[Groups(['read', 'write'])]
     private ?string $name = null;
 
@@ -49,18 +49,12 @@ class Session
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[assert\Date(
-        message: "Ceci n'est pas une date valide"
-    )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
     #[ORM\Column]
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
-    )]
-    #[assert\Date(
-        message: "Ceci n'est pas une date valide"
     )]
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_fin = null;
