@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto\Planification\Write;
+namespace App\State;
 
 
 use App\Dto\Cours\Write\CourseDtoWrite; 
@@ -18,10 +18,10 @@ class CoursProcessorWrite
 
     public function __invoke(CourseDtoWrite $courseDto): Course
     {
-        // Créez une nouvelle instance de l'entité Course et attribuez-lui les valeurs du DTO
         $course = new Course();
         $course->setName($courseDto->getName());
         $course->setDuree($courseDto->getDuree());
+        dd($course);
 
        
         $this->entityManager->persist($course);

@@ -27,7 +27,7 @@ class PlanificationProcessor implements ProcessorInterface
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): JsonResponse
     {
         $planification = new Planification;
-        $planification->setDateDebut($data->date_debut); 
+        $planification->setDateDebut($data->datedebut); 
         $planification->setHeureDebut($data->heure_debut);
 
         $session = $this->sessionRepository->getById($data->session_id);

@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use App\Dto\Planifications\Write\PlanificationsDtoWrite;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
-use App\Dto\PlanificationsDtoWrite\PlanificationsDtoWrite;
+
 use App\Repository\PlanificationRepository;
 use App\State\PlanificationProcessor;
 use Doctrine\DBAL\Types\Types;

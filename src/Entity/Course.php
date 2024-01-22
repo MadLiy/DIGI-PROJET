@@ -25,7 +25,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
+        new Post(security: "is_granted('ROLE_INSTRUCTOR') "),
         new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
@@ -37,22 +37,17 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[assert\NotBlank(
-        message: "Ce champs ne peux pas être vide"
-    )]
-    #[Assert\Unique(
-        message : "Ce nom de cours est déja utilisé"
-    )]
+    
+    
     #[Groups(['read', 'write'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[assert\NotBlank(
-        message: "Ce champs ne peux pas être vide"
+    #[Assert\Range(
+        min: 1, // Durée minimale en heures
+        max: 20, // Durée maximale en heures
+        notInRangeMessage: 'La durée du cours doit être entre {{ min }} et {{ max }} heures.'
     )]
-    #[Assert\Range(min: 0.5,
-                   max: 8,   
-                   notInRangeMessage: "Le cours doit durer au minimum {{ min }} heure et au maximum {{ max }} heures.")]
     #[Groups(['read', 'write'])]
     private ?float $duree = null;
 
