@@ -19,7 +19,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints\Cascade;
 
@@ -34,7 +33,7 @@ use Symfony\Component\Validator\Constraints\Cascade;
         new GetCollection(security: "is_granted('ROLE_ADMIN')" || "is_granted('ROLE_INSTRUCTOR')"),
         new Post(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class),
         new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
-        new Patch(security: "is_granted('ROLE_ADMIN') or object == user")
+        new Patch(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class)
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
@@ -93,7 +92,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(mappedBy: 'interviens', fetch: "EAGER", targetEntity: Planification::class)]
+    #[ORM\OneToMany(mappedBy: 'interviens', fetch: "EAGER", targetEntity: Planification::class, cascade:["persist"])]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
@@ -101,7 +100,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(targetEntity: Session::class, fetch: "EAGER", inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class, fetch: "EAGER", inversedBy: 'users',cascade:["persist"])]
     #[Groups(['read', 'write'])]
     private Collection $participe;
 
