@@ -8,7 +8,9 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
+use App\Dto\PlanificationsDtoWrite\PlanificationsDtoWrite;
 use App\Repository\PlanificationRepository;
+use App\State\PlanificationProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,7 +23,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
+        new Post(input: PlanificationsDtoWrite::class, processor:PlanificationProcessor::class),
         new Delete()
     ]
 )]
