@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
+use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,17 +21,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints\Cascade;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity("email")]
 #[ApiResource(
-    security:"is_granted('ROLE_STUDENT')",
+    security: "is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
-        new Get(security: "is_granted('ROLE_STUDENT') and object == user" || "is_granted('ROLE_ADMIN"),
-        new GetCollection(security: "is_granted('ROLE_ADMIN')"),
-        new Post(security: "is_granted('ROLE_ADMIN') or object == user"),
+        new Get(security: "is_granted('ROLE_STUDENT') and object == user" || "is_granted('ROLE_ADMIN')"),
+        new GetCollection(security: "is_granted('ROLE_ADMIN')" || "is_granted('ROLE_INSTRUCTOR')"),
+        new Post(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class),
         new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
         new Patch(security: "is_granted('ROLE_ADMIN') or object == user")
     ]
@@ -65,11 +67,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\PasswordStrength([
-        'minScore' => PasswordStrength::STRENGTH_STRONG,
-        'message' => 'Votre mot de passe est trop simple et ne respecte pas les règles de securité'
-    ])]
+    // #[Assert\PasswordStrength([
+    //     'minScore' => PasswordStrength::STRENGTH_MEDIUM,
+    //     'message' => 'Votre mot de passe est trop simple et ne respecte pas les règles de securité'
+    // ])]
     private ?string $password = null;
+
+    #[Assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+        )]
+    #[Groups(['read', 'write'])]
+    private ?string $plainPassword = null;
 
     #[ORM\Column(length: 100)]
     #[Groups(['read', 'write'])]
@@ -85,15 +93,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(mappedBy: 'interviens',fetch: "EAGER", targetEntity: Planification::class)]
+    #[ORM\OneToMany(mappedBy: 'interviens', fetch: "EAGER", targetEntity: Planification::class)]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(targetEntity: Course::class,fetch: "EAGER", inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Course::class, fetch: "EAGER", inversedBy: 'users',cascade:["persist"])]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(targetEntity: Session::class,fetch: "EAGER", inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class, fetch: "EAGER", inversedBy: 'users')]
     #[Groups(['read', 'write'])]
     private Collection $participe;
 
@@ -165,6 +173,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
     /**
      * @see UserInterface
      */
