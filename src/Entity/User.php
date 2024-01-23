@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
+use App\Dto\UserGetDto;
 use App\Repository\UserRepository;
+use App\State\UserStateProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -25,7 +28,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
-        new Get(),
+        new Get(output: UserGetDto::class, provider: UserStateProvider::class),
         new GetCollection(),
         new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
         new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
@@ -33,6 +36,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

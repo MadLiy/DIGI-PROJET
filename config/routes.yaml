@@ -6,3 +6,7 @@ controllers:
 login_check:
     path: /api/login_check
     #methods: ["POST"]
+User_planning:
+    path: /api/users/{id}/planning
+    controller: App\Controller\UserController
+    methods: ["GET"]
