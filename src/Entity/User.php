@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Patch;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -11,28 +12,28 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
+use App\State\UserPasswordHasher;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints\Cascade;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity("email")]
 #[ApiResource(
-    // security: "is_granted('ROLE_USER')",
+    security: "is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
-        new Get(),
-        new Get(
-            uriTemplate: '/users/{email}',
-            requirements: ['email' => '\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'],
-        ),
-        new GetCollection(),
-        new Post(security: "is_granted('ROLE_ADMIN')"),
-        new Delete()
+        new Get(security: "is_granted('ROLE_STUDENT') and object == user" || "is_granted('ROLE_ADMIN')"),
+        new GetCollection(security: "is_granted('ROLE_ADMIN')" || "is_granted('ROLE_INSTRUCTOR')"),
+        new Post(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
+        new Patch(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class)
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
@@ -48,7 +49,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         message: "Ce champs ne peux pas être vide"
     )]
     #[Groups(['read', 'write'])]
-
+    #[Assert\Email(
+        message: "Cette addresse mail est dèja utilisée"
+    )]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -63,11 +66,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\PasswordStrength([
-        'minScore' => PasswordStrength::STRENGTH_STRONG,
-        'message' => 'Votre mot de passe est trop simple et ne respecte pas les règles de securité'
-    ])]
+    // #[Assert\PasswordStrength([
+    //     'minScore' => PasswordStrength::STRENGTH_MEDIUM,
+    //     'message' => 'Votre mot de passe est trop simple et ne respecte pas les règles de securité'
+    // ])]
     private ?string $password = null;
+
+    #[Assert\NotBlank(
+        message: "Ce champs ne peux pas être vide"
+    )]
+    #[Groups(['read', 'write'])]
+    private ?string $plainPassword = null;
 
     #[ORM\Column(length: 100)]
     #[Groups(['read', 'write'])]
@@ -83,15 +92,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $lastName = null;
 
-    #[ORM\OneToMany(fetch: "EAGER", mappedBy: 'interviens', targetEntity: Planification::class)]
+    #[ORM\OneToMany(mappedBy: 'interviens', fetch: "EAGER", targetEntity: Planification::class, cascade: ["persist"])]
     #[Groups(['read', 'write'])]
     private Collection $planifications;
 
-    #[ORM\ManyToMany(fetch: "EAGER", targetEntity: Course::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Course::class, fetch: "EAGER", inversedBy: 'users', cascade: ["persist"])]
     #[Groups(['read', 'write'])]
     private Collection $dispense;
 
-    #[ORM\ManyToMany(fetch: "EAGER", targetEntity: Session::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Session::class, fetch: "EAGER", inversedBy: 'users', cascade: ["persist"])]
+    #[Groups(['read', 'write'])]
     private Collection $participe;
 
     public function __construct()
@@ -134,8 +144,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every user at least has ROLE_STUDENT
+        $roles[] = 'ROLE_STUDENT';
 
         return array_unique($roles);
     }
@@ -162,6 +172,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(?string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
+
+        return $this;
+    }
     /**
      * @see UserInterface
      */

@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
@@ -12,20 +11,22 @@ use App\Repository\CourseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Mime\Message;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 #[UniqueEntity("name")]
 #[ApiResource(
+    security: "is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
         new Get(),
         new GetCollection(),
-        new Post(),
-        new Delete()
+        new Post(security: "is_granted('ROLE_ADMIN') or object.owner == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.owner == user")
     ]
 )]
 class Course
@@ -39,9 +40,6 @@ class Course
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[Assert\Unique(
-        message : "Ce nom de cours est déja utilisé"
-    )]
     #[Groups(['read', 'write'])]
     private ?string $name = null;
 
@@ -49,11 +47,11 @@ class Course
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    // #[Assert\Range([
-    //     'min' => 0.5,
-    //     'max' => 8,
-    //     "message"=> 'Le cours doit durer entre {{ min }} heure et {{ max }} heures.',
-    // ])]
+    #[Assert\Range(
+        min: 0.5,
+        max: 8,
+        notInRangeMessage: "Le cours doit durer au minimum {{ min }} heure et au maximum {{ max }} heures."
+    )]
     #[Groups(['read', 'write'])]
     private ?float $duree = null;
 

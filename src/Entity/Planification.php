@@ -13,8 +13,10 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
 #[ORM\Entity(repositoryClass: PlanificationRepository::class)]
 #[ApiResource(
+    security:"is_granted('ROLE_STUDENT')",
     normalizationContext: ['groups' => ['read']],
     denormalizationContext: ['groups' => ['write']],
     operations: [
@@ -35,9 +37,7 @@ class Planification
     #[assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
-    #[assert\Date(
-        message: "Ceci n'est pas une date valide"
-    )]
+
     #[Groups(['read', 'write'])]
     private ?\DateTimeImmutable $date_debut = null;
 
@@ -46,9 +46,7 @@ class Planification
         message: "Ce champs ne peux pas être vide"
     )]
     #[Groups(['read', 'write'])]
-    #[assert\Time(
-        message: "Ceci n'est pas une heure valide"
-    )]
+
     private ?\DateTimeImmutable $heure_debut = null;
 
     #[ORM\ManyToOne(inversedBy: 'planifications')]
