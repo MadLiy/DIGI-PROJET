@@ -31,8 +31,8 @@ use Symfony\Component\Validator\Constraints\Cascade;
     operations: [
         new Get(security: "is_granted('ROLE_STUDENT') and object == user" || "is_granted('ROLE_ADMIN')"),
         new GetCollection(security: "is_granted('ROLE_ADMIN')" || "is_granted('ROLE_INSTRUCTOR')"),
-        new Post(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class),
-        new Delete(security: "is_granted('ROLE_ADMIN') or object == user"),
+        new Post(security: "is_granted('ROLE_ADMIN')", processor: UserPasswordHasher::class),
+        new Delete(security: "is_granted('ROLE_ADMIN')"),
         new Patch(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class)
     ]
 )]
