@@ -36,7 +36,6 @@ use Symfony\Component\Validator\Constraints\Cascade;
         new Patch(security: "is_granted('ROLE_ADMIN') or object == user", processor: UserPasswordHasher::class)
     ]
 )]
-#[ApiFilter(SearchFilter::class, properties: ['email' => 'ipartial'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -80,7 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 100)]
     #[Groups(['read', 'write'])]
-    #[assert\NotBlank(
+    #[Assert\NotBlank(
         message: "Ce champs ne peux pas être vide"
     )]
     private ?string $name = null;
